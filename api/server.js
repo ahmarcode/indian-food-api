@@ -5,17 +5,21 @@ const stringSimilarity = require('string-similarity');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Load the food data from the JSON file
+// Load the food data from the JSON file (ensure file exists)
 const foodDataPath = path.join(__dirname, 'foodData.json');
 let foodDatabase = {};
 
-fs.readFile(foodDataPath, 'utf8', (err, data) => {
-  if (err) {
-    console.error('Error reading food data file:', err);
-    process.exit(1);
-  }
-  foodDatabase = JSON.parse(data);
-});
+if (fs.existsSync(foodDataPath)) {
+  fs.readFile(foodDataPath, 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading food data file:', err);
+      process.exit(1);
+    }
+    foodDatabase = JSON.parse(data);
+  });
+} else {
+  console.error('foodData.json file not found.');
+}
 
 // Middleware to parse JSON requests
 app.use(express.json());
